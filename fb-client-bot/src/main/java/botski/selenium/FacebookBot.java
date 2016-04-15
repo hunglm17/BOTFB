@@ -6,9 +6,9 @@
 package botski.selenium;
 
 import botski.util.Utils;
+import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
@@ -58,7 +58,7 @@ public class FacebookBot {
         ((DesiredCapabilities) caps).setCapability(CapabilityType.PROXY,
                 new Proxy().setHttpProxy(myProxy));
         this.driver = new PhantomJSDriver(caps);
-        driver.manage().window().setSize(new Dimension(1024, 900));
+//        driver.manage().window().setSize(new Dimension(1024, 900));
     }
 
     public String getScrenshotName() {
@@ -74,13 +74,20 @@ public class FacebookBot {
         formPassword.sendKeys(password);
         WebElement loginF = driver.findElement(By.id("login_form"));
         loginF.submit();
-        Utils.getScrenshot(driver, "Login_");
+//        Utils.getScrenshot(driver, "Login_");
+        System.out.println("Login success-----");
     }
 
     public void logout() {
-        String url = "https://mbasic.facebook.com/logout.php?h=AffSEUYT5RsM6bkY&t=1446949608&ref_component=mbasic_footer&ref_page=%2Fwap%2Fhome.php&refid=7";
-        driver.get(url);
-        Utils.getScrenshot(driver, "Logout_");
+        try {
+            String url = "https://mbasic.facebook.com/logout.php?h=AffSEUYT5RsM6bkY&t=1446949608&ref_component=mbasic_footer&ref_page=%2Fwap%2Fhome.php&refid=7";
+            driver.get(url);
+//        Utils.getScrenshot(driver, "Logout_");
+        } catch (Exception ex) {
+
+        } finally {
+            driver.quit();
+        }
     }
 
     public void postTextToTimeline(String text) {
@@ -154,8 +161,35 @@ public class FacebookBot {
     public void getGroups() {
     }
 
-    public void getSuggestedGroups(String sendrequest) {
+    public void getSuggestedGroups(boolean isSendJoin) {
         String url = "https://m.facebook.com/groups/";
-
+        driver.get(url);
+        List<WebElement> bq = driver.findElements(By.className("bq"));
+        if (bq.isEmpty()) {
+            bq = driver.findElements(By.xpath("bj"));
+        }
+        for (int i = 0; i < bq.size(); i++) {
+            List<WebElement> li = bq.get(i).findElements(By.tagName("li"));
+            for (int j = 0; j < li.size(); j++) {
+                try {
+                    String nombre = li.get(j).findElements(By.tagName("td")).get(0).findElements(By.name("a")).get(0).getText();
+                    String description = li.get(j).findElements(By.tagName("td")).get(0).findElements(By.className("bx")).get(0).getText();
+                    String linkToGroup = li.get(j).findElements(By.tagName("td")).get(0).findElements(By.tagName("a")).get(0).getAttribute("href");
+                    String linkToRequest = li.get(j).findElements(By.tagName("td")).get(1).findElements(By.tagName("a")).get(0).getAttribute("href");
+                    System.out.println("INFO------: nombre:" + nombre + ":des:" + description + ":link:" + linkToGroup);
+                } catch (Exception ex) {
+                    System.out.println("ERR-----:" + ex.getLocalizedMessage());
+                }
+            }
+        }
     }
+
+    public WebDriver getDriver() {
+        return driver;
+    }
+
+    public void setDriver(WebDriver driver) {
+        this.driver = driver;
+    }
+
 };

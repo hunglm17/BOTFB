@@ -16,7 +16,6 @@
 package botski.util;
 
 import java.io.File;
-import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -41,7 +40,7 @@ public class Utils {
         File Ss = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         try {
             FileUtils.copyFile(Ss, new File("D:\\" + imgName + ".jpg"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
