@@ -15,16 +15,14 @@
  */
 package botski.example;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.util.Iterator;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,13 +31,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Proxy;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -170,55 +168,7 @@ public class AddMeFastExample {
      */
     public static void main(String[] args) {
 //        (new AddMeFastExample()).run();
-        String myProxy = "192.168.193.13:3128";
-        Capabilities caps = new DesiredCapabilities();
-        ((DesiredCapabilities) caps).setJavascriptEnabled(true);
-        ((DesiredCapabilities) caps).setCapability("takesScreenshot", true);
-        ((DesiredCapabilities) caps).setCapability(
-                PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
-                "D:\\1.SOFT\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe"
-        );
-        ((DesiredCapabilities) caps).setCapability(CapabilityType.PROXY,
-                new Proxy().setHttpProxy(myProxy));
-        WebDriver driver = new PhantomJSDriver(caps);
 
-        driver.manage().window().setSize(new Dimension(1600, 900));
-
-        File file = new File("cookie.file");
-        ObjectInputStream in;
-        try {
-            in = new ObjectInputStream(new FileInputStream(file));
-            Set<Cookie> cookies = (Set<Cookie>) in.readObject();
-            in.close();
-            Iterator<Cookie> i = cookies.iterator();
-            while (i.hasNext()) {
-                driver.manage().addCookie(i.next());
-            }
-            driver.get("https://www.facebook.com/");
-            System.out.println(driver.getTitle());
-        } catch (Exception ex) {
-            driver.get("https://www.facebook.com/");
-            System.out.println(driver.getTitle());
-            driver.findElement(By.id("email")).sendKeys("lived.and.devil@gmail.com");
-            driver.findElement(By.id("pass")).sendKeys("Sp@123456");
-            driver.findElement(By.id("u_0_w")).click();
-            System.out.println(driver.getTitle());
-        }
-
-        try {
-            ObjectOutput out = new ObjectOutputStream(new FileOutputStream("cookie.file"));
-            out.writeObject(driver.manage().getCookies());
-            out.close();
-        } catch (Exception ex) {
-            Logger.getLogger(AddMeFastExample.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        File Ss = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        try {
-            FileUtils.copyFile(Ss, new File("D:\\Dollar.jpg"));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
     }
 
 }
